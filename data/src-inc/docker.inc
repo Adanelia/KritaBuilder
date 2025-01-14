@@ -260,13 +260,20 @@ function dockerContainerRun() {
         displayNfo ""
     fi
 
+    if [[ ! -e /tmp/krita-docker-xauth ]] ||
+        ! cmp -s $XAUTHORITY /tmp/krita-docker-xauth ; then
+
+        echo "### Forwarding XAUTH cookie..."
+        cat $XAUTHORITY > /tmp/krita-docker-xauth
+    fi
+
     ${DOCKER_BINARY} container run -P -t -d \
     $DOCKER_MOUNTS \
     -v /tmp/.X11-unix/:/tmp/.X11-unix \
-    -v $XAUTHORITY:$APPIMG_USER_HOME/.Xauthority:ro \
+    -v /tmp/krita-docker-xauth:/tmp/krita-docker-xauth:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -e DISPLAY \
-    -e XAUTHORITY \
+    -e XAUTHORITY=/tmp/krita-docker-xauth \
     -e TERM=$TERM \
     -h $HOSTNAME \
     --cap-add=SYS_PTRACE \
