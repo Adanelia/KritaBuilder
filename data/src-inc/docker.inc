@@ -449,7 +449,6 @@ function dockerContainerCreatePulseaudioSocket {
 
         pactl load-module module-native-protocol-unix socket=/tmp/pulseaudio-docker.socket 1>&$REDIRECT
 
-        if [ $? -eq 0 ]; then
         cat <<EOF > /tmp/pulseaudio.client.conf
 default-server = unix:/tmp/pulseaudio-docker.socket
 # Prevent a server running in the container
@@ -458,15 +457,7 @@ daemon-binary = /bin/true
 # Prevent the use of shared memory
 enable-shm = false
 EOF
-            if [ $OPT_VERBOSE -eq 2 ]; then
-                displayOk
-            fi
-        else
-            if [ $OPT_VERBOSE -eq 2 ]; then
-                displayKo
-            fi
-            return 1
-        fi
+
     else
         if [ $OPT_VERBOSE -eq 2 ]; then
             display "N/A (already exists)"
