@@ -243,7 +243,7 @@ function kritaBuildAppImage() {
     cd $KRITA_WS_PATH
     execTime kritaBuildAppImage $KRITA_SRC_PATH/packaging/linux/appimage/build-image.sh $KRITA_WS_PATH $KRITA_SRC_PATH 1>&$REDIRECT || exit 2
 
-    APPIMAGE_FILE=$(ls -t -1 $KRITA_WS_PATH/*.appimage)
+    APPIMAGE_FILE=$(ls -t -1 $KRITA_WS_PATH/*.AppImage)
     APPIMAGE_FILE_BN=$(basename $APPIMAGE_FILE)
 
     cp $GITNFO_FILE "$KRITA_APPIMG_PATH/$APPIMAGE_FILE_BN.gitNfo"
