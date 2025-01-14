@@ -487,7 +487,7 @@ function commandNew() {
     environmentLastStarted ADD $ENVIRONMENT_NAME
 
     displayStep "Install dependencies"
-    dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaInstallDeps $OPT_VERBOSE
+    dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaInstallDeps $OPT_VERBOSE
     if [ $? -ne 0 ]; then
         displayKo
         return 1
@@ -1113,12 +1113,12 @@ function commandBuild() {
 
     dockerContainerRun $ENVIRONMENT_NAME 1
 
-    dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC buildLogStart
-    dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC execTimeStart
+    dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC buildLogStart
+    dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC execTimeStart
 
     if [ $OPT_CLEAN -eq 1 ]; then
         displayStep "Clean before build"
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaClean $OPT_VERBOSE
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaClean $OPT_VERBOSE
         if [ $? -ne 0 ]; then
             displayKo
             return 1
@@ -1128,7 +1128,7 @@ function commandBuild() {
 
     if [ $OPT_CLEAN_SIP -eq 1 ]; then
         displayStep "Clean SIP before build"
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaCleanSip $OPT_VERBOSE
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaCleanSip $OPT_VERBOSE
         if [ $? -ne 0 ]; then
             displayKo
             return 1
@@ -1142,7 +1142,7 @@ function commandBuild() {
             displayNfo ""
         fi
 
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaInstallDeps $OPT_VERBOSE
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaInstallDeps $OPT_VERBOSE
         if [ $? -ne 0 ]; then
             if [ $OPT_VERBOSE -eq 1 ]; then
                 displayKo
@@ -1156,7 +1156,7 @@ function commandBuild() {
     displayStep "Current Git repository"
     displayNfo ""
 
-    GITNFO=$(dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC buildGitNfo kritaBuild)
+    GITNFO=$(dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC buildGitNfo kritaBuild)
     IFS=$'\n'
     for nfo in $GITNFO
     do
@@ -1168,7 +1168,7 @@ function commandBuild() {
         displayNfo ""
     fi
 
-    dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaBuild $OPT_JOBS $OPT_VERBOSE $KRITA_EXTRA_CMAKE_OPTIONS
+    dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaBuild $OPT_JOBS $OPT_VERBOSE $KRITA_EXTRA_CMAKE_OPTIONS
     if [ $? -ne 0 ]; then
         if [ $OPT_VERBOSE -eq 1 ]; then
             displayKo
@@ -1183,7 +1183,7 @@ function commandBuild() {
         if [ $OPT_VERBOSE -gt 1 ]; then
             displayNfo ""
         fi
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaBuildAppImage $OPT_JOBS $OPT_VERBOSE
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaBuildAppImage $OPT_JOBS $OPT_VERBOSE
         if [ $? -ne 0 ]; then
             if [ $OPT_VERBOSE -eq 1 ]; then
                 displayKo
@@ -1195,7 +1195,7 @@ function commandBuild() {
     fi
 
     if [ $OPT_TIME -eq 1 ]; then
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC execTimeGet
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC execTimeGet
     fi
 
     if [ $OPT_RUN_KRITA -eq 1 ]; then
@@ -1310,7 +1310,7 @@ function commandKrita() {
         displayStep "Start from environment built from"
         displayNfo ""
 
-        GITNFO=$(dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC buildGitNfo)
+        GITNFO=$(dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC buildGitNfo)
         IFS=$'\n'
         for nfo in $GITNFO
         do
@@ -1338,7 +1338,7 @@ function commandKrita() {
             OPT_DEBUG=
         fi
 
-        dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC kritaExec $OPT_DEBUG $OPT_RESET "$OPT_KRITA"
+        dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC kritaExec $OPT_DEBUG $OPT_RESET "$OPT_KRITA"
     else
         if [ "$OPT_RESET" != "" ]; then
             displayNfo ".. Warning: --reset options are ignored with AppImage"
@@ -1457,11 +1457,11 @@ function commandLogs() {
     case "$OPT_OPEN" in
         'cat')
             displayNfo ""
-            dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC buildLogGet $OPT_MODE $OPT_TIME $OPT_DEBUG $OPT_OPEN
+            dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC buildLogGet $OPT_MODE $OPT_TIME $OPT_DEBUG $OPT_OPEN
             ;;
         'emacs' | 'mcedit' | 'nano'  | 'vi' | 'vim')
             displayNfo "start $OPT_OPEN"
-            dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC buildLogGet $OPT_MODE $OPT_TIME $OPT_DEBUG $OPT_OPEN
+            dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC buildLogGet $OPT_MODE $OPT_TIME $OPT_DEBUG $OPT_OPEN
             ;;
         *)
             display "unknown editor"
@@ -1554,44 +1554,44 @@ function commandTool() {
             if [ "$OPT_ROOT" == "Y" ]; then
                 displayStep "Execute $TLS_NAME (as root)"
                 display
-                dockerContainerExec -ti -u root $ENVIRONMENT_NAME $TLS_NAME
+                dockerContainerExec -i -u root $ENVIRONMENT_NAME $TLS_NAME
             else
                 displayStep "Execute $TLS_NAME"
                 display
-                dockerContainerExec -ti $ENVIRONMENT_NAME $TLS_NAME
+                dockerContainerExec -i $ENVIRONMENT_NAME $TLS_NAME
             fi
             ;;
         'gdb')
             if [ "$OPT_ROOT" == "Y" ]; then
                 displayStep "Execute $TLS_NAME (as root)"
                 display
-                dockerContainerExec -ti -u $ENVIRONMENT_NAME $KRITA_EXEC gdbExec
+                dockerContainerExec -i -u $ENVIRONMENT_NAME $KRITA_EXEC gdbExec
             else
                 displayStep "Execute $TLS_NAME"
                 display
-                dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC gdbExec
+                dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC gdbExec
             fi
             ;;
         'callgrind-on')
             if [ "$OPT_ROOT" == "Y" ]; then
                 displayStep "Execute $TLS_NAME (as root)"
                 display
-                dockerContainerExec -ti -u $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --start
+                dockerContainerExec -i -u $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --start
             else
                 displayStep "Execute $TLS_NAME"
                 display
-                dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --start
+                dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --start
             fi
             ;;
         'callgrind-off')
             if [ "$OPT_ROOT" == "Y" ]; then
                 displayStep "Execute $TLS_NAME (as root)"
                 display
-                dockerContainerExec -ti -u $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --stop
+                dockerContainerExec -i -u $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --stop
             else
                 displayStep "Execute $TLS_NAME"
                 display
-                dockerContainerExec -ti $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --stop
+                dockerContainerExec -i $ENVIRONMENT_NAME $KRITA_EXEC callgrindExec --stop
             fi
             ;;
         *)
