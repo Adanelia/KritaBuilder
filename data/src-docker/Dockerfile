@@ -1,4 +1,4 @@
-FROM invent-registry.kde.org/sysadmin/ci-images/krita-appimage-builder AS base_image
+FROM invent-registry.kde.org/sysadmin/ci-images/krita-appimage-builder-2204 AS base_image
 
 ARG APPIMAGE_UID=1000
 ARG APPIMAGE_GID=1000
@@ -9,7 +9,7 @@ USER root
 
 RUN apt-get update
 RUN apt-get -y install curl \
-                       cmake-curses-gui gdb valgrind sysvinit-utils  \
+                       cmake-curses-gui=3.31.6-0kitware1ubuntu22.04.1 gdb valgrind sysvinit-utils  \
                        emacs-nox \
                        nano \
                        vim \
