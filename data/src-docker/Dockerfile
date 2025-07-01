@@ -18,7 +18,7 @@ RUN apt-get -y install curl \
                        time \
                        mc \
                        htop \
-                       python3.8-venv \
+                       python3-venv \
                        cpu-checker # for kvm-ok command
 
 RUN update-alternatives --set gcc /usr/bin/gcc-11
